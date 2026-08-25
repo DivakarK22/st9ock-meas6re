@@ -4,6 +4,7 @@ const { sma, rsi, atr, classicPivots, fibonacciLevels } = require('../lib/indica
 const { analyzeCandles } = require('../lib/ranges');
 const { generateCandles } = require('../lib/providers/demo');
 const { findInstrument, instrumentsForScan } = require('../lib/universe');
+const { nextTradingSession, suggestTiming, isBuyAction } = require('../lib/timing');
 
 describe('indicators', () => {
   it('computes SMA', () => {
@@ -56,5 +57,41 @@ describe('universe', () => {
     const bse = findInstrument('BSE:TCS');
     assert.equal(bse.kiteKey, 'BSE:TCS');
     assert.ok(instrumentsForScan({ exchange: 'ALL' }).length > 50);
+  });
+});
+
+describe('timing', () => {
+  it('rolls to the next weekday session after the cash close', () => {
+    const session = nextTradingSession(new Date('2026-08-26T11:00:00Z'));
+    assert.equal(session.date, '2026-08-27');
+    assert.equal(session.squareOff, '15:10');
+  });
+
+  it('skips the weekend after Friday close', () => {
+    const session = nextTradingSession(new Date('2026-08-28T11:00:00Z'));
+    assert.equal(session.date, '2026-08-31');
+  });
+
+  it('gives an IST buy window and 15:10 sell-by for an intraday buy', () => {
+    const candles = generateCandles('NSE:HCLTECH', 'intraday');
+    const analysis = analyzeCandles(candles, { horizon: 'intraday' });
+    analysis.action = 'BUY DIP';
+    analysis.bias = 'uptrend';
+    const timing = suggestTiming(analysis, new Date('2026-08-25T04:00:00Z'));
+    assert.equal(timing.side, 'buy');
+    assert.ok(timing.buyWindow.start);
+    assert.equal(timing.sellBy, '15:10 IST');
+    assert.equal(timing.session.date, '2026-08-25');
+    assert.equal(isBuyAction('ACCUMULATE'), true);
+    assert.equal(isBuyAction('REDUCE / AVOID FRESH LONGS'), false);
+  });
+
+  it('gives a review date for long-term sells', () => {
+    const candles = generateCandles('NSE:TCS', 'longterm');
+    const analysis = analyzeCandles(candles, { horizon: 'longterm' });
+    analysis.action = 'ACCUMULATE';
+    const timing = suggestTiming(analysis, new Date('2026-08-25T04:00:00Z'));
+    assert.match(timing.sellBy, /^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(timing.hold.includes('trading days'));
   });
 });

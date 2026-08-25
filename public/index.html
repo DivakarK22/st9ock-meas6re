@@ -42,8 +42,17 @@
           </select>
         </label>
         <button type="submit">Analyse stock</button>
+        <button type="button" id="daily-btn" class="secondary">Today's suggestion</button>
         <button type="button" id="scan-btn" class="secondary">Scan market</button>
       </form>
+    </section>
+
+    <section id="daily" class="daily">
+      <div class="scan-head">
+        <h2>Today's suggestion</h2>
+        <p id="daily-meta">Loading buy window and sell-by time…</p>
+      </div>
+      <div id="daily-body"></div>
     </section>
 
     <section id="detail" class="detail hidden"></section>
@@ -64,13 +73,15 @@
               <th>Action</th>
               <th>Buy range</th>
               <th>Sell range</th>
+              <th>Buy window</th>
+              <th>Sell by</th>
               <th>Stop</th>
               <th>RSI</th>
             </tr>
           </thead>
           <tbody id="scan-body">
             <tr>
-              <td colspan="9">No scan yet.</td>
+              <td colspan="11">No scan yet.</td>
             </tr>
           </tbody>
         </table>

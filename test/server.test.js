@@ -59,6 +59,7 @@ describe('Bharat Market Analyst API', () => {
     assert.ok(res.body.analysis.buyRange.low <= res.body.analysis.buyRange.high);
     assert.ok(res.body.analysis.sellRange.high > 0);
     assert.ok(res.body.analysis.stopLoss);
+    assert.ok(res.body.timing.sellBy);
   });
 
   it('scans the market universe', async () => {
@@ -67,6 +68,16 @@ describe('Bharat Market Analyst API', () => {
     assert.equal(res.body.succeeded, 12);
     assert.ok(res.body.ideas[0].buyRange);
     assert.ok(res.body.ideas[0].sellRange);
+  });
+
+  it('returns a daily buy suggestion with sell-by time', async () => {
+    const res = await request('/api/daily-suggestion?horizon=intraday&exchange=NSE&limit=20');
+    assert.equal(res.status, 200);
+    assert.ok(res.body.session.open);
+    assert.ok(res.body.pick);
+    assert.ok(res.body.pick.timing.buyWindow.start);
+    assert.equal(res.body.pick.timing.sellBy, '15:10 IST');
+    assert.match(res.body.headline, /Buy /);
   });
 
   it('rejects analyse without a symbol', async () => {

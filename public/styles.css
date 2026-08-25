@@ -57,7 +57,7 @@ h1, h2 { margin: 0.15rem 0 0.5rem; }
   font-size: 0.92rem;
 }
 
-.controls, .detail, .scan-wrap, .kite-help {
+.controls, .detail, .scan-wrap, .kite-help, .daily {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -67,7 +67,7 @@ h1, h2 { margin: 0.15rem 0 0.5rem; }
 
 .search {
   display: grid;
-  grid-template-columns: 1.4fr 0.9fr 0.9fr auto auto;
+  grid-template-columns: 1.3fr 0.8fr 0.8fr auto auto auto;
   gap: 0.75rem;
   align-items: end;
 }
@@ -121,6 +121,37 @@ button.secondary {
 .buy strong { color: var(--buy); }
 .sell strong { color: var(--sell); }
 
+.daily-pick {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.daily-hero {
+  background: linear-gradient(160deg, #102c24, #08141d);
+  border: 1px solid #2d6b57;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+}
+
+.daily-hero h3 { margin: 0.2rem 0 0.4rem; color: var(--buy); }
+
+.watch-list {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.watch-list li {
+  background: #08141d;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  cursor: pointer;
+}
+
 .table-scroll { overflow-x: auto; }
 
 table {
@@ -144,6 +175,6 @@ tbody tr:hover { background: #102230; }
 code { color: var(--gold); }
 
 @media (max-width: 900px) {
-  .search, .cards { grid-template-columns: 1fr; }
+  .search, .cards, .daily-pick { grid-template-columns: 1fr; }
   .top { flex-direction: column; }
 }

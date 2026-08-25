@@ -9,7 +9,8 @@ This is a technical-analysis helper, not investment advice.
 - Analyses a symbol (example: `NSE:RELIANCE` or `BSE:TCS`).
 - Scans a universe of liquid Indian equities and ranks setups.
 - Uses pivots + ATR for intraday zones, and 52-week / Fibonacci / moving-average structure for longer-term zones.
-- Prefers **Zerodha Kite Connect** when an access token is present.
+- Each idea also includes an IST **buy window** and a **sell-by time** (15:10 IST for intraday MIS; a review date for longer-term holds).
+- **Today's suggestion** ranks cash-buy setups and names one stock to buy today, plus when to sell.
 - Falls back to Yahoo Finance (`.NS` / `.BO`), then deterministic demo candles if live data is unavailable.
 
 ## Run
@@ -51,4 +52,5 @@ export MARKET_PROVIDER=demo
 
 - `GET /api/health`
 - `GET /api/analyze?symbol=NSE:INFY&horizon=intraday|longterm`
+- `GET /api/daily-suggestion?exchange=NSE|BSE|ALL&horizon=intraday|longterm&limit=40`
 - `GET /api/scan?exchange=NSE|BSE|ALL&horizon=intraday|longterm&limit=40`

@@ -171,7 +171,9 @@ tbody tr:hover { background: #102230; }
 
 .meta { color: var(--muted); font-size: 0.85rem; }
 
-.kite-help a { color: var(--accent); }
+.research { margin-top: 1rem; }
+.news-list { padding-left: 1.1rem; }
+.news-list a { color: var(--accent); }
 code { color: var(--gold); }
 
 @media (max-width: 900px) {

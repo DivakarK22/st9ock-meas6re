@@ -4,6 +4,7 @@ const http = require('node:http');
 
 process.env.PORT = '3456';
 process.env.MARKET_PROVIDER = 'demo';
+process.env.NEWS_PROVIDER = 'demo';
 
 const app = require('../server');
 const PORT = 3456;
@@ -60,6 +61,9 @@ describe('Bharat Market Analyst API', () => {
     assert.ok(res.body.analysis.sellRange.high > 0);
     assert.ok(res.body.analysis.stopLoss);
     assert.ok(res.body.timing.sellBy);
+    assert.ok(res.body.research);
+    assert.ok(res.body.research.summary);
+    assert.ok(Array.isArray(res.body.research.articles));
   });
 
   it('scans the market universe', async () => {

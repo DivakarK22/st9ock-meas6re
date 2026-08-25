@@ -37,7 +37,8 @@ function renderDetail(payload) {
   detail.innerHTML = `
     <p class="meta">${inst.exchange}:${inst.symbol} · ${inst.name} · ${payload.source} · ${a.horizon}</p>
     <h2>${inst.symbol} · ${rupee(a.lastPrice)} <span class="meta">(${a.changePct}%)</span></h2>
-    <p><strong>${a.action}</strong> — ${a.reason}. Bias ${a.bias}, confidence ${a.confidence}.</p>
+    <p><strong>${a.action}</strong> — ${a.reason}. Bias ${a.bias}, confidence ${a.confidence}.
+      View <strong>${payload.investmentView || 'mixed'}</strong>.</p>
     <div class="cards">
       <article class="card buy"><span>Buy range</span><strong>${rangeText(a.buyRange)}</strong></article>
       <article class="card sell"><span>Sell range</span><strong>${rangeText(a.sellRange)}</strong></article>
@@ -50,6 +51,31 @@ function renderDetail(payload) {
       SMA20 ${a.indicators.sma20 ?? '—'} · SMA50 ${a.indicators.sma50 ?? '—'} ·
       SMA200 ${a.indicators.sma200 ?? '—'} · 52w ${rupee(a.indicators.low52)}–${rupee(a.indicators.high52)}
     </p>
+    ${renderResearch(payload.research)}
+  `;
+}
+
+function renderResearch(research) {
+  if (!research) return '';
+  const items = (research.articles || [])
+    .slice(0, 8)
+    .map(
+      (a) =>
+        `<li><a href="${a.url}" target="_blank" rel="noreferrer">${a.title}</a>
+         <div class="meta">${a.source || ''} · ${a.publishedAt || ''} · ${a.themes?.join(', ') || ''}</div></li>`
+    )
+    .join('');
+  const profile = research.profile?.extract
+    ? `<p>${research.profile.extract}</p>`
+    : '';
+  return `
+    <div class="research">
+      <h3>Company news &amp; profile</h3>
+      <p><strong>Outlook: ${research.outlook}</strong> — ${research.summary}</p>
+      ${profile}
+      <ul class="news-list">${items || '<li>No recent headlines.</li>'}</ul>
+      <p class="meta">Sources: Google News RSS and Wikipedia. Not a prediction of future price.</p>
+    </div>
   `;
 }
 
@@ -107,6 +133,7 @@ function renderDaily(payload) {
         <p><strong>Buy ${rangeText(pick.buyRange)}</strong> between <strong>${windowText(pick.timing)}</strong></p>
         <p class="sell"><strong>Sell by ${pick.timing?.sellBy}</strong> into ${rangeText(pick.sellRange)}</p>
         <p class="meta">${pick.timing?.note || ''}</p>
+        <p class="meta"><strong>News outlook: ${pick.research?.outlook || 'n/a'}</strong> — ${(pick.research?.summary || '').slice(0, 280)}</p>
       </article>
       <article class="card buy"><span>Buy window (IST)</span><strong>${windowText(pick.timing)}</strong><p class="meta">Cash / MIS entry</p></article>
       <article class="card sell"><span>Time to sell</span><strong>${pick.timing?.sellBy}</strong><p class="meta">${pick.timing?.hold || ''}</p></article>

@@ -11,6 +11,7 @@ This is a technical-analysis helper, not investment advice.
 - Uses pivots + ATR for intraday zones, and 52-week / Fibonacci / moving-average structure for longer-term zones.
 - Each idea also includes an IST **buy window** and a **sell-by time** (15:10 IST for intraday MIS; a review date for longer-term holds).
 - **Today's suggestion** ranks cash-buy setups and names one stock to buy today, plus when to sell.
+- Optional **daily email** at 08:15 IST on weekdays (local cron or GitHub Action). No website required.
 - Falls back to Yahoo Finance (`.NS` / `.BO`), then deterministic demo candles if live data is unavailable.
 
 ## Run
@@ -25,6 +26,32 @@ Open http://localhost:3000
 ```bash
 npm test
 ```
+
+## Daily email (no website)
+
+The CLI builds today’s buy pick and emails it. Default recipient is `dvkr22@gmail.com`.
+
+1. Copy `.env.example` to `.env`.
+2. Create a [Gmail app password](https://myaccount.google.com/apppasswords) and set `SMTP_USER` / `SMTP_PASS`.
+3. Preview without sending:
+
+```bash
+npm run email:preview
+```
+
+4. Send once:
+
+```bash
+npm run email:daily
+```
+
+5. Schedule weekdays at **08:15 IST** on this computer:
+
+```bash
+npm run email:install-cron
+```
+
+The laptop/PC must be on at that time. If you would rather not keep a machine running, add repo secrets (`EMAIL_TO`, `SMTP_USER`, `SMTP_PASS`, and optionally Kite keys) and the workflow `.github/workflows/daily-suggestion-email.yml` sends the same mail from GitHub Actions. That is not a hosted site — it is only a scheduled job.
 
 ## Kite Connect (optional)
 

@@ -96,6 +96,10 @@
         <li>Open the login URL from <code>GET /api/kite/login-url</code>, then post the <code>request_token</code> to <code>/api/kite/session</code>.</li>
       </ol>
       <p>Without Kite, the app uses Yahoo Finance, then demo candles if live data is blocked.</p>
+      <p>
+        Daily email (no website): copy <code>.env.example</code> to <code>.env</code>, add a Gmail app password,
+        then <code>npm run email:preview</code> and <code>npm run email:install-cron</code> for 08:15 IST weekdays.
+      </p>
     </section>
 
     <script src="/app.js"></script>

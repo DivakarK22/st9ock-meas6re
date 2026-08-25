@@ -1,0 +1,180 @@
+:root {
+  color-scheme: dark;
+  --bg: #071018;
+  --panel: #0e1a24;
+  --line: #1f3344;
+  --text: #e8f1f7;
+  --muted: #8aa0b3;
+  --accent: #3ee0b0;
+  --sell: #ff7a7a;
+  --buy: #7ee0a6;
+  --gold: #f0c36a;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 1.5rem;
+  background:
+    radial-gradient(1200px 500px at 10% -10%, #12324a 0%, transparent 55%),
+    var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.eyebrow {
+  margin: 0;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--gold);
+}
+
+h1, h2 { margin: 0.15rem 0 0.5rem; }
+
+.pill {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  max-width: 420px;
+}
+
+.disclaimer {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.controls, .detail, .scan-wrap, .kite-help, .daily {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.search {
+  display: grid;
+  grid-template-columns: 1.3fr 0.8fr 0.8fr auto auto auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+input, select, button {
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #08141d;
+  color: var(--text);
+}
+
+button {
+  background: var(--accent);
+  color: #042017;
+  font-weight: 700;
+  cursor: pointer;
+  border: 0;
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.hidden { display: none; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.card {
+  background: #08141d;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.8rem;
+}
+
+.card strong { display: block; font-size: 1.15rem; }
+.buy strong { color: var(--buy); }
+.sell strong { color: var(--sell); }
+
+.daily-pick {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.daily-hero {
+  background: linear-gradient(160deg, #102c24, #08141d);
+  border: 1px solid #2d6b57;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+}
+
+.daily-hero h3 { margin: 0.2rem 0 0.4rem; color: var(--buy); }
+
+.watch-list {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.watch-list li {
+  background: #08141d;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  cursor: pointer;
+}
+
+.table-scroll { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.55rem 0.4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: #102230; }
+
+.meta { color: var(--muted); font-size: 0.85rem; }
+
+.kite-help a { color: var(--accent); }
+code { color: var(--gold); }
+
+@media (max-width: 900px) {
+  .search, .cards, .daily-pick { grid-template-columns: 1fr; }
+  .top { flex-direction: column; }
+}

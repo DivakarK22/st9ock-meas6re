@@ -3,142 +3,101 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stock Measure</title>
-    <style>
-      :root {
-        color-scheme: light dark;
-        font-family: system-ui, sans-serif;
-      }
-      body {
-        max-width: 640px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-        line-height: 1.5;
-      }
-      h1 {
-        margin-bottom: 0.25rem;
-      }
-      form {
-        display: grid;
-        gap: 0.75rem;
-        margin: 1.5rem 0;
-      }
-      label {
-        display: grid;
-        gap: 0.25rem;
-        font-weight: 600;
-      }
-      input {
-        padding: 0.5rem;
-        font-size: 1rem;
-      }
-      button {
-        padding: 0.6rem 1rem;
-        font-size: 1rem;
-        cursor: pointer;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 1rem;
-      }
-      th,
-      td {
-        border: 1px solid #8884;
-        padding: 0.5rem;
-        text-align: left;
-      }
-      .status {
-        padding: 0.5rem;
-        border-radius: 4px;
-        background: #e8f5e9;
-        color: #1b5e20;
-      }
-      .error {
-        background: #ffebee;
-        color: #b71c1c;
-      }
-    </style>
+    <title>Bharat Market Analyst · NSE & BSE</title>
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <h1>Stock Measure</h1>
-    <p>Measure the total value of a stock position.</p>
+    <header class="top">
+      <div>
+        <p class="eyebrow">Zerodha Kite · NSE · BSE</p>
+        <h1>Bharat Market Analyst</h1>
+      </div>
+      <div id="provider" class="pill">Checking data source…</div>
+    </header>
 
-    <div id="status" class="status">Checking server…</div>
+    <p class="disclaimer">
+      Educational ranges from technicals (pivots, ATR, moving averages, RSI, Fibonacci).
+      Not investment advice. Confirm on Kite before trading.
+    </p>
 
-    <form id="measure-form">
-      <label>
-        Symbol
-        <input name="symbol" placeholder="AAPL" required />
-      </label>
-      <label>
-        Quantity
-        <input name="quantity" type="number" min="1" step="1" placeholder="10" required />
-      </label>
-      <button type="submit">Measure position</button>
-    </form>
+    <section class="controls">
+      <form id="analyze-form" class="search">
+        <label>
+          Symbol
+          <input name="symbol" value="NSE:RELIANCE" placeholder="NSE:RELIANCE or BSE:TCS" required />
+        </label>
+        <label>
+          Horizon
+          <select name="horizon" id="horizon">
+            <option value="intraday">Intraday</option>
+            <option value="longterm">Long term</option>
+          </select>
+        </label>
+        <label>
+          Exchange scan
+          <select name="exchange" id="exchange">
+            <option value="NSE">NSE</option>
+            <option value="BSE">BSE</option>
+            <option value="ALL">NSE + BSE</option>
+          </select>
+        </label>
+        <button type="submit">Analyse stock</button>
+        <button type="button" id="daily-btn" class="secondary">Today's suggestion</button>
+        <button type="button" id="scan-btn" class="secondary">Scan market</button>
+      </form>
+    </section>
 
-    <h2>Measurements</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Symbol</th>
-          <th>Qty</th>
-          <th>Price</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody id="measurements-body"></tbody>
-    </table>
+    <section id="daily" class="daily">
+      <div class="scan-head">
+        <h2>Today's suggestion</h2>
+        <p id="daily-meta">Loading buy window and sell-by time…</p>
+      </div>
+      <div id="daily-body"></div>
+    </section>
 
-    <script>
-      const statusEl = document.getElementById('status');
-      const tbody = document.getElementById('measurements-body');
-      const form = document.getElementById('measure-form');
+    <section id="detail" class="detail hidden"></section>
 
-      async function loadHealth() {
-        const res = await fetch('/api/health');
-        const data = await res.json();
-        statusEl.textContent = `Server healthy — ${data.service}`;
-        statusEl.classList.remove('error');
-      }
+    <section class="scan-wrap">
+      <div class="scan-head">
+        <h2>Market ideas</h2>
+        <p id="scan-meta">Run a scan to rank liquid NSE/BSE names by buy/sell setup.</p>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Score</th>
+              <th>Stock</th>
+              <th>Price</th>
+              <th>Bias</th>
+              <th>Action</th>
+              <th>Buy range</th>
+              <th>Sell range</th>
+              <th>Buy window</th>
+              <th>Sell by</th>
+              <th>Stop</th>
+              <th>RSI</th>
+            </tr>
+          </thead>
+          <tbody id="scan-body">
+            <tr>
+              <td colspan="11">No scan yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-      async function loadMeasurements() {
-        const res = await fetch('/api/measurements');
-        const { measurements } = await res.json();
-        tbody.innerHTML = measurements
-          .map(
-            (m) =>
-              `<tr><td>${m.symbol}</td><td>${m.quantity}</td><td>$${m.pricePerShare}</td><td>$${m.totalValue}</td></tr>`
-          )
-          .join('');
-      }
+    <section class="kite-help">
+      <h2>Connect Zerodha Kite</h2>
+      <ol>
+        <li>Create a Kite Connect app at <a href="https://developers.kite.trade/" target="_blank" rel="noreferrer">developers.kite.trade</a>.</li>
+        <li>Export <code>KITE_API_KEY</code>, <code>KITE_API_SECRET</code>, and optionally <code>KITE_ACCESS_TOKEN</code>.</li>
+        <li>Open the login URL from <code>GET /api/kite/login-url</code>, then post the <code>request_token</code> to <code>/api/kite/session</code>.</li>
+      </ol>
+      <p>Without Kite, the app uses Yahoo Finance, then demo candles if live data is blocked.</p>
+    </section>
 
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const symbol = form.symbol.value;
-        const quantity = Number(form.quantity.value);
-        const res = await fetch('/api/measure', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ symbol, quantity }),
-        });
-        if (!res.ok) {
-          const err = await res.json();
-          statusEl.textContent = err.error || 'Measurement failed';
-          statusEl.classList.add('error');
-          return;
-        }
-        form.reset();
-        await loadMeasurements();
-        statusEl.textContent = 'Measurement recorded';
-        statusEl.classList.remove('error');
-      });
-
-      loadHealth().then(loadMeasurements).catch(() => {
-        statusEl.textContent = 'Server unreachable';
-        statusEl.classList.add('error');
-      });
-    </script>
+    <script src="/app.js"></script>
   </body>
 </html>

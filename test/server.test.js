@@ -2,6 +2,10 @@ const { describe, it, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
 
+process.env.PORT = '3456';
+process.env.MARKET_PROVIDER = 'demo';
+
+const app = require('../server');
 const PORT = 3456;
 let server;
 
@@ -33,40 +37,40 @@ function request(path, options = {}) {
 }
 
 before(async () => {
-  process.env.PORT = String(PORT);
-  server = require('../server');
-  await new Promise((resolve) => setTimeout(resolve, 200));
+  server = app.listen(PORT, '127.0.0.1');
+  await new Promise((resolve) => server.on('listening', resolve));
 });
 
-after(() => {
-  if (server?.close) server.close();
-});
+after(() => server.close());
 
-describe('Stock Measure API', () => {
+describe('Bharat Market Analyst API', () => {
   it('returns health status', async () => {
     const res = await request('/api/health');
     assert.equal(res.status, 200);
     assert.equal(res.body.status, 'ok');
+    assert.equal(res.body.service, 'bharat-market-analyst');
+    assert.equal(res.body.provider.fallback, 'demo');
   });
 
-  it('creates a measurement', async () => {
-    const res = await request('/api/measure', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ symbol: 'AAPL', quantity: 5 }),
-    });
-    assert.equal(res.status, 201);
-    assert.equal(res.body.measurement.symbol, 'AAPL');
-    assert.equal(res.body.measurement.quantity, 5);
-    assert.ok(res.body.measurement.totalValue > 0);
+  it('analyses an NSE stock with buy and sell ranges', async () => {
+    const res = await request('/api/analyze?symbol=NSE:RELIANCE&horizon=intraday');
+    assert.equal(res.status, 200);
+    assert.equal(res.body.instrument.symbol, 'RELIANCE');
+    assert.ok(res.body.analysis.buyRange.low <= res.body.analysis.buyRange.high);
+    assert.ok(res.body.analysis.sellRange.high > 0);
+    assert.ok(res.body.analysis.stopLoss);
   });
 
-  it('rejects invalid measurements', async () => {
-    const res = await request('/api/measure', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ symbol: '', quantity: -1 }),
-    });
+  it('scans the market universe', async () => {
+    const res = await request('/api/scan?horizon=longterm&exchange=NSE&limit=12');
+    assert.equal(res.status, 200);
+    assert.equal(res.body.succeeded, 12);
+    assert.ok(res.body.ideas[0].buyRange);
+    assert.ok(res.body.ideas[0].sellRange);
+  });
+
+  it('rejects analyse without a symbol', async () => {
+    const res = await request('/api/analyze');
     assert.equal(res.status, 400);
   });
 });

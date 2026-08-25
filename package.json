@@ -1,12 +1,12 @@
 {
-  "name": "stock-measure",
+  "name": "bharat-market-analyst",
   "version": "1.0.0",
-  "description": "Stock measurement demo application",
+  "description": "NSE and BSE market analyser with Zerodha Kite Connect support and buy/sell ranges for intraday and long-term setups.",
   "private": true,
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "node --test test/server.test.js"
+    "test": "node --test test/*.test.js"
   },
   "engines": {
     "node": ">=20"

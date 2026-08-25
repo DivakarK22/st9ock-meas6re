@@ -64,6 +64,8 @@ describe('Bharat Market Analyst API', () => {
     assert.ok(res.body.research);
     assert.ok(res.body.research.summary);
     assert.ok(Array.isArray(res.body.research.articles));
+    assert.ok(res.body.research.annualReports.reports.length >= 1);
+    assert.match(res.body.research.annualReports.reports[0].period, /FY /);
   });
 
   it('scans the market universe', async () => {

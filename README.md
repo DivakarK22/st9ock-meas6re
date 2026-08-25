@@ -11,7 +11,7 @@ This is a technical-analysis helper, not investment advice.
 - Uses pivots + ATR for intraday zones, and 52-week / Fibonacci / moving-average structure for longer-term zones.
 - Each idea also includes an IST **buy window** and a **sell-by time** (15:10 IST for intraday MIS; a review date for longer-term holds).
 - **Today's suggestion** ranks cash-buy setups and names one stock to buy today, plus when to sell.
-- **Company research:** Google News (India) plus a Wikipedia profile. Headlines adjust the view (including WAIT / NEWS RISK). This is **not** a prediction of future returns.
+- **Company research:** Google News (India), Wikipedia profile, **NSE annual-report PDFs**, and a Screener financial snapshot. Headlines can flip a technical buy to WAIT / NEWS RISK. This is **not** a prediction of future returns.
 - Falls back to Yahoo Finance (`.NS` / `.BO`), then deterministic demo candles if live data is unavailable.
 
 ## Run

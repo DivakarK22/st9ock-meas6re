@@ -63,6 +63,32 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;');
 }
 
+function renderAnnualReports(pack) {
+  if (!pack) return '';
+  const reports = (pack.reports || [])
+    .map(
+      (r) =>
+        `<li><a href="${escapeHtml(r.url)}" target="_blank" rel="noreferrer">${escapeHtml(r.period)} · ${escapeHtml(r.submissionType)}</a>
+         <div class="meta">${escapeHtml(r.source || 'NSE')} · ${escapeHtml(r.publishedAt || '')} · ${escapeHtml(r.size || '')}</div></li>`
+    )
+    .join('');
+  const hi = pack.highlights;
+  const growth = hi
+    ? `<p class="meta">Sales growth TTM ${escapeHtml(hi.salesGrowth?.TTM || '—')} · 5y ${escapeHtml(hi.salesGrowth?.['5 Years'] || '—')} · Profit 5y ${escapeHtml(hi.profitGrowth?.['5 Years'] || '—')} · ROE 5y ${escapeHtml(hi.roe?.['5 Years'] || '—')}</p>`
+    : '';
+  const bullets = [
+    ...(hi?.pros || []).map((p) => `<li class="buy">${escapeHtml(p)}</li>`),
+    ...(hi?.cons || []).map((p) => `<li class="sell">${escapeHtml(p)}</li>`),
+  ].join('');
+  return `
+    <h3>Annual reports</h3>
+    <ul class="news-list">${reports || '<li>No NSE annual-report PDF found.</li>'}</ul>
+    ${growth}
+    ${bullets ? `<ul class="news-list">${bullets}</ul>` : ''}
+    ${hi?.url ? `<p class="meta"><a href="${escapeHtml(hi.url)}" target="_blank" rel="noreferrer">Financial snapshot on Screener</a></p>` : ''}
+  `;
+}
+
 function renderResearch(research) {
   if (!research) return '';
   const items = (research.articles || [])
@@ -82,7 +108,8 @@ function renderResearch(research) {
       <p><strong>Outlook: ${escapeHtml(research.outlook)}</strong> — ${escapeHtml(research.summary)}</p>
       ${profile}
       <ul class="news-list">${items || '<li>No recent headlines.</li>'}</ul>
-      <p class="meta">Sources: Google News RSS and Wikipedia. Not a prediction of future price.</p>
+      ${renderAnnualReports(research.annualReports)}
+      <p class="meta">Sources: NSE annual reports, Screener highlights, Google News, Wikipedia. Not a prediction of future price.</p>
     </div>
   `;
 }
@@ -142,6 +169,11 @@ function renderDaily(payload) {
         <p class="sell"><strong>Sell by ${pick.timing?.sellBy}</strong> into ${rangeText(pick.sellRange)}</p>
         <p class="meta">${pick.timing?.note || ''}</p>
         <p class="meta"><strong>News outlook: ${escapeHtml(pick.research?.outlook || 'n/a')}</strong> — ${escapeHtml((pick.research?.summary || '').slice(0, 280))}</p>
+        ${
+          pick.research?.annualReports?.reports?.[0]
+            ? `<p class="meta">Annual report ${escapeHtml(pick.research.annualReports.reports[0].period)} · <a href="${escapeHtml(pick.research.annualReports.reports[0].url)}" target="_blank" rel="noreferrer">PDF</a></p>`
+            : ''
+        }
       </article>
       <article class="card buy"><span>Buy window (IST)</span><strong>${windowText(pick.timing)}</strong><p class="meta">Cash / MIS entry</p></article>
       <article class="card sell"><span>Time to sell</span><strong>${pick.timing?.sellBy}</strong><p class="meta">${pick.timing?.hold || ''}</p></article>

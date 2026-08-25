@@ -55,23 +55,31 @@ function renderDetail(payload) {
   `;
 }
 
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 function renderResearch(research) {
   if (!research) return '';
   const items = (research.articles || [])
     .slice(0, 8)
-    .map(
-      (a) =>
-        `<li><a href="${a.url}" target="_blank" rel="noreferrer">${a.title}</a>
-         <div class="meta">${a.source || ''} · ${a.publishedAt || ''} · ${a.themes?.join(', ') || ''}</div></li>`
-    )
+    .map((a) => {
+      const href = escapeHtml(a.url || '#');
+      return `<li><a href="${href}" target="_blank" rel="noreferrer">${escapeHtml(a.title)}</a>
+         <div class="meta">${escapeHtml(a.source || '')} · ${escapeHtml(a.publishedAt || '')} · ${escapeHtml((a.themes || []).join(', '))}</div></li>`;
+    })
     .join('');
   const profile = research.profile?.extract
-    ? `<p>${research.profile.extract}</p>`
+    ? `<p>${escapeHtml(research.profile.extract)}</p>`
     : '';
   return `
     <div class="research">
       <h3>Company news &amp; profile</h3>
-      <p><strong>Outlook: ${research.outlook}</strong> — ${research.summary}</p>
+      <p><strong>Outlook: ${escapeHtml(research.outlook)}</strong> — ${escapeHtml(research.summary)}</p>
       ${profile}
       <ul class="news-list">${items || '<li>No recent headlines.</li>'}</ul>
       <p class="meta">Sources: Google News RSS and Wikipedia. Not a prediction of future price.</p>
@@ -133,7 +141,7 @@ function renderDaily(payload) {
         <p><strong>Buy ${rangeText(pick.buyRange)}</strong> between <strong>${windowText(pick.timing)}</strong></p>
         <p class="sell"><strong>Sell by ${pick.timing?.sellBy}</strong> into ${rangeText(pick.sellRange)}</p>
         <p class="meta">${pick.timing?.note || ''}</p>
-        <p class="meta"><strong>News outlook: ${pick.research?.outlook || 'n/a'}</strong> — ${(pick.research?.summary || '').slice(0, 280)}</p>
+        <p class="meta"><strong>News outlook: ${escapeHtml(pick.research?.outlook || 'n/a')}</strong> — ${escapeHtml((pick.research?.summary || '').slice(0, 280))}</p>
       </article>
       <article class="card buy"><span>Buy window (IST)</span><strong>${windowText(pick.timing)}</strong><p class="meta">Cash / MIS entry</p></article>
       <article class="card sell"><span>Time to sell</span><strong>${pick.timing?.sellBy}</strong><p class="meta">${pick.timing?.hold || ''}</p></article>

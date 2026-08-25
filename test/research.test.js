@@ -41,7 +41,8 @@ describe('company research', () => {
       score: 3,
     });
     assert.equal(packed.outlook, 'constructive');
-    assert.match(packed.summary, /not treat it as a forecast|supportive/i);
+    assert.match(packed.summary, /supportive/i);
+    assert.doesNotMatch(packed.summary, /Recent headlines/);
   });
 
   it('flags conflicted technicals versus defensive news', () => {

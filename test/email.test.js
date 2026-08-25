@@ -74,6 +74,29 @@ describe('email composer', () => {
     assert.match(mail.html, /2026-09-07/);
     assert.match(mail.html, /dvkr22@gmail.com/);
   });
+
+  it('builds Cursor markdown without email', () => {
+    const { composeDailyMarkdown } = require('../lib/email');
+    const notice = composeDailyMarkdown({
+      intraday: sampleSuggestion(),
+      longterm: sampleSuggestion({
+        headline: 'Buy NSE:ASIANPAINT today',
+        pick: {
+          ...sampleSuggestion().pick,
+          symbol: 'ASIANPAINT',
+          timing: {
+            buyWindow: { start: '09:20', end: '15:00', timezone: 'IST' },
+            sellBy: '2026-09-07',
+            note: 'Review by the sell date.',
+          },
+        },
+      }),
+    });
+    assert.match(notice.markdown, /HCLTECH/);
+    assert.match(notice.markdown, /15:10 IST/);
+    assert.match(notice.markdown, /Delivered in Cursor/);
+    assert.doesNotMatch(notice.markdown, /SMTP/);
+  });
 });
 
 describe('email CLI helpers', () => {

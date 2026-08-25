@@ -11,7 +11,7 @@ This is a technical-analysis helper, not investment advice.
 - Uses pivots + ATR for intraday zones, and 52-week / Fibonacci / moving-average structure for longer-term zones.
 - Each idea also includes an IST **buy window** and a **sell-by time** (15:10 IST for intraday MIS; a review date for longer-term holds).
 - **Today's suggestion** ranks cash-buy setups and names one stock to buy today, plus when to sell.
-- Optional **daily email** at 08:15 IST on weekdays (local cron or GitHub Action). No website required.
+- **Cursor notification** on weekdays at 08:15 IST (this Cloud Agent timer, or a Cursor Automation). Email is optional.
 - Falls back to Yahoo Finance (`.NS` / `.BO`), then deterministic demo candles if live data is unavailable.
 
 ## Run
@@ -27,7 +27,22 @@ Open http://localhost:3000
 npm test
 ```
 
-## Daily email (no website)
+Preview the Cursor notification text:
+
+```bash
+npm run notify:cursor
+```
+
+## Daily notification in Cursor
+
+Default delivery is **this Cursor chat**, not email.
+
+- A weekday timer at **08:15 IST** (`45 2 * * 1-5` UTC) wakes the agent and posts the buy window + sell-by time here.
+- For a notification that outlives this conversation, create a Cursor Automation using `.cursor/daily-suggestion-automation.md`.
+
+Email remains available with `npm run email:daily` if you still want SMTP.
+
+## Daily email (optional)
 
 The CLI builds today’s buy pick and emails it. Default recipient is `dvkr22@gmail.com`.
 

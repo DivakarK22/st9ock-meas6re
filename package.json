@@ -9,7 +9,8 @@
     "test": "node --test test/*.test.js",
     "email:daily": "node scripts/send-daily-email.js",
     "email:preview": "node scripts/send-daily-email.js --preview",
-    "email:install-cron": "bash scripts/install-cron.sh"
+    "email:install-cron": "bash scripts/install-cron.sh",
+    "notify:cursor": "node scripts/notify-cursor.js"
   },
   "engines": {
     "node": ">=20"

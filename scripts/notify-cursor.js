@@ -1,10 +1,10 @@
 const { dailySuggestion } = require('../lib/market');
 const { composeDailyMarkdown } = require('../lib/email');
 
-async function buildCursorNotification({ exchange = 'NSE', limit = 40 } = {}) {
+async function buildCursorNotification({ exchange = 'NSE', limit = 80 } = {}) {
   const [intraday, longterm] = await Promise.all([
-    dailySuggestion({ horizon: 'intraday', exchange, limit }),
-    dailySuggestion({ horizon: 'longterm', exchange, limit }),
+    dailySuggestion({ horizon: 'intraday', exchange, limit, count: 10 }),
+    dailySuggestion({ horizon: 'longterm', exchange, limit, count: 10 }),
   ]);
   return composeDailyMarkdown({ intraday, longterm });
 }

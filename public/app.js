@@ -144,41 +144,36 @@ function renderDaily(payload) {
   const session = payload.session
     ? `${payload.session.weekday} ${payload.session.date} · ${payload.session.open}–${payload.session.close} IST`
     : '';
-  dailyMeta.textContent = `${payload.headline}. ${session} · ${payload.buyCandidates} buy setups from ${payload.scanned} names.`;
-  const pick = payload.pick;
-  if (!pick) {
+  const picks = payload.picks?.length ? payload.picks : payload.pick ? [payload.pick] : [];
+  dailyMeta.textContent = `${payload.headline}. ${session} · ${picks.length} names from ${payload.scanned} scanned.`;
+  if (!picks.length) {
     dailyBody.innerHTML = `<p>No cash-buy candidate for this session. Scan the table for wait/sell ideas.</p>`;
     return;
   }
-  const watch = (payload.watch || [])
+  const list = picks
     .map(
-      (row) => `
+      (row, index) => `
         <li data-symbol="${row.exchange}:${row.symbol}">
-          <strong>${row.symbol}</strong> · ${row.action}
-          <div class="meta">Buy ${windowText(row.timing)} · Sell by ${row.timing?.sellBy || '—'}</div>
+          <strong>${index + 1}. ${row.symbol}</strong> · ${row.action}
+          <div class="meta">Buy ${rangeText(row.buyRange)} · ${windowText(row.timing)} · Sell by ${row.timing?.sellBy || '—'}</div>
         </li>`
     )
     .join('');
+  const pick = picks[0];
   dailyBody.innerHTML = `
     <div class="daily-pick">
       <article class="daily-hero" data-symbol="${pick.exchange}:${pick.symbol}">
-        <p class="meta">${pick.exchange}:${pick.symbol} · score ${pick.score}</p>
-        <h3>Buy ${pick.symbol} today</h3>
-        <p>${pick.reason}</p>
+        <p class="meta">${picks.length} stocks to check and buy</p>
+        <h3>Lead: ${pick.symbol}</h3>
+        <p>${pick.reason || pick.action}</p>
         <p><strong>Buy ${rangeText(pick.buyRange)}</strong> between <strong>${windowText(pick.timing)}</strong></p>
-        <p class="sell"><strong>Sell by ${pick.timing?.sellBy}</strong> into ${rangeText(pick.sellRange)}</p>
-        <p class="meta">${pick.timing?.note || ''}</p>
-        <p class="meta"><strong>News outlook: ${escapeHtml(pick.research?.outlook || 'n/a')}</strong> — ${escapeHtml((pick.research?.summary || '').slice(0, 280))}</p>
-        ${
-          pick.research?.annualReports?.reports?.[0]
-            ? `<p class="meta">Annual report ${escapeHtml(pick.research.annualReports.reports[0].period)} · <a href="${escapeHtml(pick.research.annualReports.reports[0].url)}" target="_blank" rel="noreferrer">PDF</a></p>`
-            : ''
-        }
+        <p class="sell"><strong>Sell by ${pick.timing?.sellBy}</strong></p>
       </article>
-      <article class="card buy"><span>Buy window (IST)</span><strong>${windowText(pick.timing)}</strong><p class="meta">Cash / MIS entry</p></article>
-      <article class="card sell"><span>Time to sell</span><strong>${pick.timing?.sellBy}</strong><p class="meta">${pick.timing?.hold || ''}</p></article>
+      <article class="card buy"><span>Buy window (IST)</span><strong>${windowText(pick.timing)}</strong></article>
+      <article class="card sell"><span>Time to sell</span><strong>${pick.timing?.sellBy || '—'}</strong></article>
     </div>
-    ${watch ? `<h3>Also watch</h3><ul class="watch-list">${watch}</ul>` : ''}
+    <h3>All 10</h3>
+    <ol class="watch-list">${list}</ol>
   `;
 }
 
@@ -215,7 +210,7 @@ async function loadDaily() {
   const exchange = form.exchange.value;
   dailyMeta.textContent = 'Picking today’s buy and sell-by time…';
   const res = await fetch(
-    `/api/daily-suggestion?horizon=${horizon}&exchange=${exchange}&limit=40`
+    `/api/daily-suggestion?horizon=${horizon}&exchange=${exchange}&limit=80&count=10`
   );
   const data = await res.json();
   if (!res.ok) {

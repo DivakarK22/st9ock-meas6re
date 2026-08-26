@@ -80,10 +80,10 @@ describe('Bharat Market Analyst API', () => {
     const res = await request('/api/daily-suggestion?horizon=intraday&exchange=NSE&limit=20');
     assert.equal(res.status, 200);
     assert.ok(res.body.session.open);
-    assert.ok(res.body.pick);
-    assert.ok(res.body.pick.timing.buyWindow.start);
-    assert.equal(res.body.pick.timing.sellBy, '15:10 IST');
-    assert.match(res.body.headline, /Buy /);
+    assert.ok(res.body.picks.length >= 10);
+    assert.match(res.body.headline, /stocks to check and buy/);
+    assert.ok(res.body.picks[0].buyRange);
+    assert.ok(res.body.picks[0].timing.sellBy);
   });
 
   it('rejects analyse without a symbol', async () => {

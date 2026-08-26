@@ -68,7 +68,8 @@ describe('email composer', () => {
         },
       }),
     });
-    assert.match(mail.subject, /HCLTECH/);
+    assert.match(mail.subject, /stocks to check and buy/);
+    assert.match(mail.text, /HCLTECH/);
     assert.match(mail.text, /09:20–09:50 IST/);
     assert.match(mail.text, /15:10 IST/);
     assert.match(mail.html, /2026-09-07/);
